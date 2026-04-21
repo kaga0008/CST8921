@@ -90,3 +90,12 @@ print("Add a prev_transaction_revenue column using F.lag() to see each customer'
 
 part_3_df = new_df.withColumn("prev_transaction_revenue", F.lag("revenue").over(Window.partitionBy("customer").orderBy("timestamp")))
 part_3_df.show(truncate=False)
+
+print("PART 4 " + "=" * 95)
+print("Add a high_quantity flag (quantity > 3) and check if it correlates with payment method.")
+
+part_4_df = new_df.withColumn("high_quantity", F.col("quantity") > 3)
+correlation_df = part_4_df.groupBy("payment_method") \
+        .agg(F.round(F.avg(F.col("high_quantity").cast("int")), 2).alias("high_quantity_ratio"))
+
+correlation_df.show(truncate=False)
